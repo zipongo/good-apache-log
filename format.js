@@ -41,10 +41,15 @@ ApacheHttpdFormatter.prototype._transform = function (data, _encoding, next) {
 
   var timestamp = moment(data.timestamp)
   var source = data.source || {}
+  var client = source.remoteAddress || '-';
+
+  if (data.headers && data.headers['x-forwarded-for']) {
+    client = data.headers['x-forwarded-for'];
+  }
 
   var replacements =
     { '%%': '%'
-    , '%h': source.remoteAddress || '-'
+    , '%h': client
     , '%l': '-'
     , '%u': '-'
     , '%U': data.path
